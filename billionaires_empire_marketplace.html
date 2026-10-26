@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10100f">
+<title>Billionaires Empire | Digital Marketplace</title>
+<style>
+:root{--bg:#10100f;--panel:#191917;--panel2:#20201c;--gold:#d9b66d;--gold2:#f2d99b;--text:#f7f3e9;--muted:#b8b2a4;--line:#38352c;--green:#9fd6ad}
+*{box-sizing:border-box}body{margin:0;background:#10100f;color:var(--text);font-family:Inter,Arial,sans-serif;line-height:1.5}
+a{color:inherit}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.topbar{position:sticky;top:0;z-index:5;background:rgba(16,16,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{max-width:1180px;margin:auto;padding:14px 20px;display:flex;align-items:center;gap:18px;justify-content:space-between}
+.brand{font-weight:900;letter-spacing:.4px;color:var(--gold2);font-size:18px;white-space:nowrap}.brand small{display:block;font-size:9px;letter-spacing:3px;color:var(--muted);font-weight:600}
+.navlinks{display:flex;align-items:center;gap:14px}.navlinks a{text-decoration:none;color:var(--muted);font-size:13px}.navlinks a:hover{color:var(--gold2)}
+.btn{border:1px solid var(--gold);background:var(--gold);color:#16130c;border-radius:10px;padding:11px 15px;font-weight:800}
+.btn.secondary{background:transparent;color:var(--gold2)}.btn.small{padding:8px 11px;font-size:12px}
+.wrap{max-width:1180px;margin:auto;padding:0 20px}.hero{padding:58px 0 38px;display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center}
+.eyebrow{color:var(--gold);text-transform:uppercase;font-weight:800;font-size:11px;letter-spacing:2.4px}
+h1{font-size:clamp(36px,5vw,60px);line-height:1.03;letter-spacing:-2px;margin:14px 0 18px;max-width:720px}
+h1 span{color:var(--gold2)}.hero p{color:var(--muted);max-width:580px;font-size:16px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:23px}
+.hero-art{border:1px solid #4d4229;border-radius:24px;padding:28px;min-height:300px;background:radial-gradient(ellipse at 50% 10%,#40351d 0,#201d15 40%,#171715 75%);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}
+.hero-art:before{content:"";position:absolute;width:240px;height:240px;border:1px solid #8d7440;border-radius:50%;right:-60px;top:10px;box-shadow:0 0 0 22px #d9b66d08,0 0 0 44px #d9b66d06}
+.coin{font-size:65px;color:var(--gold2);position:relative;text-shadow:0 8px 25px #000}.art-title{position:relative;font-size:25px;font-weight:900;max-width:260px}.art-title span{color:var(--gold2)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0 35px}
+.stat{padding:16px;border:1px solid var(--line);background:#151513;border-radius:14px}.stat strong{display:block;color:var(--gold2);font-size:21px}.stat span{font-size:12px;color:var(--muted)}
+.section{padding:26px 0 42px}.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:18px}.section h2{font-size:27px;margin:4px 0}.sub{color:var(--muted);font-size:13px}
+.searchrow{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.field{background:#181816;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px;width:100%;outline:none}.field:focus{border-color:var(--gold)}
+.search{flex:1;min-width:190px}.searchrow select{width:auto;min-width:155px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 20px}.chip{border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--muted);background:transparent;font-size:12px}.chip.active,.chip:hover{border-color:var(--gold);color:var(--gold2);background:#d9b66d12}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}.product{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.product-art{height:145px;display:flex;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,#31291a,#191917);border-bottom:1px solid var(--line)}
+.product:nth-child(3n) .product-art{background:linear-gradient(135deg,#242c29,#171917)}.product:nth-child(3n+2) .product-art{background:linear-gradient(135deg,#292338,#191719)}
+.product-body{padding:14px;display:flex;flex-direction:column;gap:8px;flex:1}.tag{color:var(--gold2);font-size:10px;text-transform:uppercase;letter-spacing:1.3px;font-weight:800}
+.product h3{font-size:15px;line-height:1.3;margin:0}.creator{font-size:11px;color:var(--muted)}.desc{font-size:12px;color:var(--muted);margin:0}.product-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:8px}.price{font-weight:900;color:var(--gold2);font-size:16px}
+.empty{padding:35px;border:1px dashed var(--line);border-radius:14px;text-align:center;color:var(--muted);grid-column:1/-1}
+.callout{border:1px solid #5b4b2b;background:linear-gradient(110deg,#211d13,#171715);padding:24px;border-radius:18px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.callout h2{margin:4px 0;font-size:23px}.callout p{margin:5px 0;color:var(--muted);font-size:13px}
+footer{border-top:1px solid var(--line);padding:25px 0;color:var(--muted);font-size:12px;margin-top:20px}
+.notice{border:1px solid #69552e;background:#241f14;color:#f2dfb0;padding:12px 14px;border-radius:12px;font-size:12px;margin:16px 0}
+.overlay{display:none;position:fixed;inset:0;background:#000b;z-index:10;align-items:center;justify-content:center;padding:16px}.overlay.show{display:flex}.modal{width:min(560px,100%);max-height:90vh;overflow:auto;background:#171715;border:1px solid var(--line);border-radius:18px;padding:22px}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.modal h2{margin:0 0 8px}.close{background:transparent;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 10px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.formrow{margin:12px 0}.formrow label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}.formrow .field{width:100%}.full{grid-column:1/-1}.fine{font-size:11px;color:var(--muted)}.success{color:var(--green);font-size:13px;margin-top:10px}
+.dashboard{display:none;border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:18px;margin-top:20px}.dashboard.show{display:block}.dashitem{padding:10px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font-size:13px}
+@media(max-width:850px){.hero{grid-template-columns:1fr;padding-top:38px}.hero-art{min-height:210px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.navlinks a{display:none}.stats{margin-bottom:20px}}
+@media(max-width:480px){.wrap{padding:0 14px}.nav{padding:12px 14px}.brand{font-size:15px}.nav .btn{padding:9px 10px;font-size:11px}.grid{gap:10px}.product-art{height:115px}.product-body{padding:11px}.product h3{font-size:13px}.product-foot{align-items:flex-start;flex-direction:column}.hero{padding-top:30px}.hero p{font-size:14px}.stats{gap:7px}.stat{padding:11px}.stat strong{font-size:17px}.stat span{font-size:10px}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.callout{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="topbar"><nav class="nav">
+  <a href="#" class="brand" style="text-decoration:none">BILLIONAIRES EMPIRE<small>DIGITAL MARKETPLACE</small></a>
+  <div class="navlinks"><a href="#marketplace">Explore products</a><a href="#creators">For creators</a><a href="#how">How it works</a></div>
+  <button class="btn small" onclick="openModal('joinModal')">Start selling</button>
+</nav></header>
+<main class="wrap">
+<section class="hero">
+ <div><div class="eyebrow">Ideas deserve an income</div>
+  <h1>Discover knowledge.<br><span>Buy, create, earn.</span></h1>
+  <p>A home for digital products made by ambitious creators. Discover ebooks, courses, templates and practical resources — all in one place.</p>
+  <div class="hero-actions"><a href="#marketplace"><button class="btn">Explore marketplace ↗</button></a><button class="btn secondary" onclick="openModal('joinModal')">Become a creator</button></div>
+  <div class="notice">Marketplace starter preview: sample products and demo interactions are shown. Live accounts, payments and protected downloads are not connected yet.</div>
+ </div>
+ <div class="hero-art"><div class="coin">✦</div><div><div class="eyebrow">Your ideas have value</div><div class="art-title">Create once.<br><span>Sell worldwide.</span></div></div><div class="sub">A platform for creators, learners and digital entrepreneurs.</div></div>
+</section>
+<section class="stats" aria-label="Marketplace highlights"><div class="stat"><strong>₦ NGN</strong><span>Local currency first</span></div><div class="stat"><strong>24/7</strong><span>Digital product access</span></div><div class="stat"><strong>Multi-creator</strong><span>One marketplace, many stores</span></div></section>
+<section class="section" id="marketplace">
+ <div class="section-head"><div><div class="eyebrow">The marketplace</div><h2>Find your next resource</h2><div class="sub">Explore digital tools to help you learn, build and grow.</div></div></div>
+ <div class="searchrow"><input id="searchInput" class="field search" placeholder="Search ebooks, courses, templates..." oninput="renderProducts()"><select id="sortSelect" class="field" onchange="renderProducts()"><option value="featured">Featured first</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select></div>
+ <div class="chips" id="categoryChips"></div><div class="grid" id="productGrid"></div>
+</section>
+<section class="section" id="creators">
+ <div class="callout"><div><div class="eyebrow">For creators & experts</div><h2>Turn what you know into income.</h2><p>Bring your digital products to Billionaires Empire and build your creator business.</p></div><button class="btn" onclick="openModal('joinModal')">Create a seller profile</button></div>
+ <div class="dashboard" id="demoDashboard"><div class="section-head"><div><div class="eyebrow">Demo creator dashboard</div><h2>Your product listings</h2><div class="sub">Saved in this browser preview only.</div></div><button class="btn small" onclick="openModal('productModal')">+ Add product</button></div><div id="sellerDetails" class="sub"></div><div id="sellerProducts"></div></div>
+</section>
+<section class="section" id="how"><div class="eyebrow">Simple by design</div><h2>How it should work</h2>
+ <div class="grid" style="margin-top:16px">
+  <div class="stat"><strong>01</strong><b>Discover</b><p class="sub">Customers browse products from different creators.</p></div>
+  <div class="stat"><strong>02</strong><b>Purchase</b><p class="sub">Customers pay securely through an integrated payment provider.</p></div>
+  <div class="stat"><strong>03</strong><b>Deliver</b><p class="sub">The system grants access to the purchased download or course.</p></div>
+  <div class="stat"><strong>04</strong><b>Earn</b><p class="sub">Creators receive their share and the platform keeps its agreed commission.</p></div>
+ </div>
+ <div class="notice">Before public launch, the production version needs a secure backend, real authentication, protected file storage, verified payment webhooks, commission accounting, creator payout checks, privacy terms and customer support processes.</div>
+</section>
+</main>
+<footer><div class="wrap" style="display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap"><span>© <span id="year"></span> Billionaires Empire</span><span>Built for digital creators · Nigeria first</span></div></footer>
+
+<div class="overlay" id="joinModal" role="dialog" aria-modal="true" aria-labelledby="joinTitle"><div class="modal">
+ <div class="modal-head"><h2 id="joinTitle">Join as a creator</h2><button class="close" onclick="closeModal('joinModal')">✕</button></div>
+ <p class="sub">Set up a demo seller profile. This preview stores details only in this browser and does not create a real online account.</p>
+ <form id="joinForm"><div class="formgrid">
+  <div class="formrow"><label for="creatorName">Your name</label><input required class="field" id="creatorName" placeholder="e.g. Ada Okafor"></div>
+  <div class="formrow"><label for="storeName">Store name</label><input required class="field" id="storeName" placeholder="e.g. Ada's Learning Hub"></div>
+  <div class="formrow full"><label for="creatorEmail">Email address</label><input required type="email" class="field" id="creatorEmail" placeholder="you@example.com"></div>
+  <div class="formrow full"><label for="creatorType">What will you sell?</label><select class="field" id="creatorType"><option>Ebooks and PDFs</option><option>Online courses</option><option>Templates and design assets</option><option>Audio, video or other digital files</option><option>Mixed digital products</option></select></div>
+ </div><button class="btn" type="submit">Create demo profile</button><div id="joinMessage" class="success"></div></form>
+</div></div>
+
+<div class="overlay" id="productModal" role="dialog" aria-modal="true" aria-labelledby="productTitle"><div class="modal">
+ <div class="modal-head"><h2 id="productTitle">Add a digital product</h2><button class="close" onclick="closeModal('productModal')">✕</button></div>
+ <p class="sub">Add a sample listing to the preview marketplace. No file is uploaded and no live listing is published.</p>
+ <form id="productForm"><div class="formgrid">
+  <div class="formrow full"><label for="newTitle">Product title</label><input required class="field" id="newTitle" placeholder="Your ebook, course or template"></div>
+  <div class="formrow"><label for="newCategory">Category</label><select class="field" id="newCategory"><option>Ebooks</option><option>Courses</option><option>Templates</option><option>Business</option><option>Design</option></select></div>
+  <div class="formrow"><label for="newPrice">Price in naira (₦)</label><input required type="number" min="0" class="field" id="newPrice" placeholder="5000"></div>
+  <div class="formrow full"><label for="newDescription">Short description</label><textarea required class="field" id="newDescription" rows="3" placeholder="What will the customer learn or receive?"></textarea></div>
+ </div><button class="btn" type="submit">Add demo listing</button><div id="productMessage" class="success"></div></form>
+</div></div>
+<script>
+const defaults=[
+ {id:1,title:"Beginner's Guide to Digital Products",category:"Ebooks",creator:"Billionaires Affiliate",price:3500,icon:"📘",desc:"A practical introduction to creating and selling digital products.",featured:true},
+ {id:2,title:"Social Media Content Templates",category:"Templates",creator:"Creative Studio",price:2500,icon:"🎨",desc:"Ready-to-customize content ideas and design templates.",featured:true},
+ {id:3,title:"Online Business Starter Course",category:"Courses",creator:"Growth Academy",price:12000,icon:"🎓",desc:"Build a stronger foundation for your online business.",featured:true},
+ {id:4,title:"AI Prompts for Entrepreneurs",category:"Business",creator:"Future Tools Lab",price:4000,icon:"✨",desc:"Prompts to help plan, write and organize business tasks.",featured:false},
+ {id:5,title:"Brand Kit Design Pack",category:"Design",creator:"Studio Gold",price:5000,icon:"🖌️",desc:"A flexible visual starting point for a growing brand.",featured:false},
+ {id:6,title:"30-Day Content Planner",category:"Templates",creator:"The Creator Desk",price:1800,icon:"🗓️",desc:"Organize a month of content in a simple planning system.",featured:false},
+ {id:7,title:"WhatsApp Sales Guide",category:"Ebooks",creator:"Billionaires Affiliate",price:3000,icon:"💬",desc:"Ideas for presenting offers and serving customers through chat.",featured:false},
+ {id:8,title:"Freelancer Business Toolkit",category:"Business",creator:"Independent Pro",price:6500,icon:"💼",desc:"Helpful checklists and worksheets for independent work.",featured:false}
+];
+let products=[...defaults],activeCategory="All",seller=null;
+const categories=["All","Ebooks","Courses","Templates","Business","Design"];
+const money=n=>"₦"+Number(n).toLocaleString("en-NG");
+function renderChips(){document.getElementById("categoryChips").innerHTML=categories.map(c=>`<button class="chip ${c===activeCategory?'active':''}" onclick="setCategory('${c}')">${c}</button>`).join("")}
+function setCategory(c){activeCategory=c;renderChips();renderProducts()}
+function renderProducts(){
+ const q=document.getElementById("searchInput").value.toLowerCase().trim(),sort=document.getElementById("sortSelect").value;
+ let list=products.filter(p=>(activeCategory==="All"||p.category===activeCategory)&&(`${p.title} ${p.category} ${p.creator} ${p.desc}`).toLowerCase().includes(q));
+ if(sort==="low")list.sort((a,b)=>a.price-b.price);if(sort==="high")list.sort((a,b)=>b.price-a.price);if(sort==="featured")list.sort((a,b)=>(b.featured?1:0)-(a.featured?1:0));
+ document.getElementById("productGrid").innerHTML=list.length?list.map(p=>`<article class="product"><div class="product-art">${p.icon||"📦"}</div><div class="product-body"><div class="tag">${p.category}</div><h3>${esc(p.title)}</h3><div class="creator">by ${esc(p.creator)}</div><p class="desc">${esc(p.desc)}</p><div class="product-foot"><span class="price">${money(p.price)}</span><button class="btn small secondary" onclick="demoBuy('${p.id}')">View product</button></div></div></article>`).join(""):`<div class="empty">No products match your search. Try another keyword or category.</div>`;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function openModal(id){document.getElementById(id).classList.add("show")}
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+function demoBuy(id){const p=products.find(x=>String(x.id)===String(id));alert(`Demo product: ${p.title}\nPrice: ${money(p.price)}\n\nCheckout is not connected yet. No payment has been taken.`)}
+document.querySelectorAll(".overlay").forEach(el=>el.addEventListener("click",e=>{if(e.target===el)el.classList.remove("show")}));
+document.getElementById("joinForm").addEventListener("submit",e=>{
+ e.preventDefault();seller={name:document.getElementById("creatorName").value.trim(),store:document.getElementById("storeName").value.trim(),email:document.getElementById("creatorEmail").value.trim(),type:document.getElementById("creatorType").value};
+ document.getElementById("joinMessage").textContent="Demo profile created in this page. This is not a real online account.";
+ document.getElementById("sellerDetails").textContent=`${seller.store} · ${seller.name} · ${seller.email} · Focus: ${seller.type}`;
+ document.getElementById("demoDashboard").classList.add("show");renderSellerProducts();
+});
+document.getElementById("productForm").addEventListener("submit",e=>{
+ e.preventDefault();if(!seller){document.getElementById("productMessage").textContent="Please create a demo creator profile first.";return}
+ const cat=document.getElementById("newCategory").value;
+ products.unshift({id:"u"+Date.now(),title:document.getElementById("newTitle").value.trim(),category:cat,creator:seller.store,price:Number(document.getElementById("newPrice").value),icon:({Ebooks:"📘",Courses:"🎓",Templates:"🎨",Business:"💼",Design:"🖌️"})[cat],desc:document.getElementById("newDescription").value.trim(),featured:false});
+ document.getElementById("productMessage").textContent="Demo listing added to the marketplace preview.";
+ renderChips();renderProducts();renderSellerProducts();e.target.reset();
+});
+function renderSellerProducts(){if(!seller)return;const mine=products.filter(p=>p.creator===seller.store);document.getElementById("sellerProducts").innerHTML=mine.length?mine.map(p=>`<div class="dashitem"><span>${esc(p.title)}</span><strong>${money(p.price)}</strong></div>`).join(""):"<p class='sub'>No products yet. Add your first demo listing.</p>"}
+document.getElementById("year").textContent=new Date().getFullYear();renderChips();renderProducts();
+</script>
+</body>
+</html>
