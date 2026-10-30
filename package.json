@@ -1,0 +1,19 @@
+{
+  "name": "billionaires-empire-payments-starter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Development scaffold for Billionaires Empire marketplace payments",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}

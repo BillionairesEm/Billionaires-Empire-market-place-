@@ -1,32 +1,52 @@
-# Billionaires Empire Digital Marketplace — Build Pack
+# Billionaires Empire — Payments Backend Starter
 
-This pack is the starting point for the full marketplace build.
+This is a **development scaffold**, not a production-ready payment system. It demonstrates the service boundaries and safety checks for a multi-creator digital marketplace.
+
+## Locked-in business settings
+- Platform commission: 10%
+- Launch currency: NGN
+- International currencies: later, after provider/account approval and a separate currency rollout
+- Creator payouts: automatic after a provider-verified successful payment, only where the provider and account support the selected payout model
 
 ## What is included
-- `billionaires_empire_marketplace.html` — the existing mobile-friendly front-end preview.
-- `database_schema.sql` — a PostgreSQL starting schema for users/creators, products, orders, commissions, and payout records.
-- `BUILD_ROADMAP.md` — implementation and launch steps.
-- `.env.example` — example configuration names only (never put real secrets in public files).
+- Express API skeleton
+- PostgreSQL schema for creators, products, orders, payment events, and payout records
+- Server-side order amount/commission calculation
+- Webhook signature verification pattern for Paystack
+- Explicit TODOs where provider credentials, approved split-payment configuration, and production logic are required
 
-## Important status
-The HTML preview is not a live marketplace. The SQL is a foundation schema, not a deployed database.
-No real accounts, file uploads, payments, protected downloads, or payouts are active until the backend is deployed and connected.
+## Important provider distinction
+"Automatic payout" does not necessarily mean an instant bank credit. Paystack/Flutterwave split settlement generally follows provider settlement rules and account eligibility. Confirm in writing with your provider whether marketplace split settlement is enabled for your business, who bears fees, and what happens for refunds/chargebacks. If you use a separate transfer API for payouts, implement a queued, idempotent payout worker and reconcile transfer webhooks.
 
-## Business rules carried forward
-- Marketplace name: Billionaires Empire
-- Launch currency: NGN (₦); international currencies later
-- Platform commission: 10% of each verified sale
-- Payment provider: Flutterwave to be added later
-- Creator payouts: automatic only if supported and approved for the configured account; otherwise use a verified payout workflow.
+## Setup
+1. Install Node.js 20+ and PostgreSQL.
+2. Copy `.env.example` to `.env`; never commit `.env`.
+3. Create a PostgreSQL database and run `schema.sql`.
+4. Run `npm install`, then `npm run dev`.
+5. Create a verified merchant/business account with a payment provider. Complete all requested identity/business verification.
+6. Ask provider support to confirm marketplace/aggregator eligibility, split payments, NGN settlement, creator subaccounts, settlement timing, fees, refund and chargeback liability.
+7. Configure test keys and test subaccounts only in the sandbox. Do not accept real payments until webhook, reconciliation, refunds, and security tests pass.
 
-## Suggested implementation order
-1. Create the hosted PostgreSQL database and secure backend.
-2. Add real authentication and role permissions.
-3. Connect product listing and creator dashboard to the backend.
-4. Add protected file storage and access-controlled downloads.
-5. Add order and commission records; never trust browser-submitted payment success.
-6. Integrate Flutterwave later using server-side transaction verification and signed webhooks.
-7. Test refunds, failed payments, duplicate webhooks, creator payout details, and admin review.
-8. Deploy with HTTPS, privacy terms, creator terms, prohibited-content rules, and customer support contact.
+## Suggested initial provider evaluation
+- **Paystack:** transaction split/subaccounts; review its official documentation:
+  https://paystack.com/docs/payments/split-payments/
+  https://paystack.com/docs/payments/multi-split-payments/
+- **Flutterwave:** split payments/subaccounts; review its official documentation:
+  https://developer.flutterwave.com/docs/split-payments
 
-Do not publish `.env` secrets or commit them to a public repository.
+Do not assume either provider will approve the exact marketplace business model or support instant payouts for every creator. Obtain confirmation before choosing.
+
+## Critical rules before production
+- Never put secret keys in browser code or a public repository.
+- Never mark an order paid based only on the checkout redirect or a client-side message.
+- Verify webhook signatures, then verify payment amount, currency, reference, and status with the provider.
+- Process each webhook idempotently; the same event may be delivered more than once.
+- Grant file access only after verified payment.
+- Do not store raw card data.
+- Verify creator identity and bank-account ownership/name before enabling payouts.
+- Add rate limiting, audit logs, backups, monitoring, refund handling, chargeback handling, and a reconciliation job.
+- Protect paid downloads with expiring signed links; do not expose permanent public file URLs.
+- Get qualified Nigerian legal/accounting advice on tax, consumer terms, privacy, and whether the platform's funds flow requires additional regulatory arrangements.
+
+## What is intentionally not active yet
+Checkout initialization is a safe placeholder until the provider and split settlement model are confirmed. Creator onboarding, actual bank transfers, refund APIs, file storage, admin controls, and production deployment still need implementation and testing.
