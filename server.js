@@ -1,65 +1,109 @@
+
 require('dotenv').config();
+
 const express = require('express');
 const crypto = require('crypto');
 const { Pool } = require('pg');
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const COMMISSION_BPS = Number(process.env.PLATFORM_COMMISSION_BPS || 1000);
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
+
+const COMMISSION_BPS = 1000;
+
+// 10% Billionaires Empire commission
 if (COMMISSION_BPS !== 1000) {
-  console.warn('Configured commission differs from the selected 10%. Confirm intentional changes.');
+  throw new Error('Invalid commission configuration');
 }
 
-// Webhook route uses raw bytes so the signature is checked against the original request body.
-app.post('/webhooks/paystack',
-  express.raw({ type: 'application/json' }),
+// Secure comparison
+function safeEqual(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') {
+    return false;
+  }
+
+  const first = Buffer.from(a);
+  const second = Buffer.from(b);
+
+  return first.length === second.length &&
+    crypto.timingSafeEqual(first, second);
+}
+
+// Flutterwave webhook
+app.post(
+  '/webhooks/flutterwave',
+  express.json({ limit: '100kb' }),
   async (req, res) => {
-    const secret = process.env.PAYSTACK_SECRET_KEY;
-    const signature = req.get('x-paystack-signature');
-    if (!secret || !signature || !Buffer.isBuffer(req.body)) {
-      return res.status(400).send('Missing webhook verification data');
+
+    const secretHash = process.env.FLW_SECRET_HASH;
+    const signature = req.get('verif-hash');
+
+    if (!secretHash || !safeEqual(signature, secretHash)) {
+      return res.status(401).send('Invalid Flutterwave signature');
     }
 
-    const expected = crypto.createHmac('sha512', secret).update(req.body).digest('hex');
-    const a = Buffer.from(signature);
-    const b = Buffer.from(expected);
-    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
-      return res.status(401).send('Invalid webhook signature');
-    }
+    const event = req.body;
+    const reference = event?.data?.tx_ref ||
+      event?.data?.reference;
 
-    let event;
-    try { event = JSON.parse(req.body.toString('utf8')); }
-    catch { return res.status(400).send('Invalid JSON'); }
-
-    // Acknowledge only after durable storage/processing. Add a DB transaction and
-    // provider API verification before marking an order paid in production.
-    const reference = event?.data?.reference;
     const eventType = event?.event || 'unknown';
-    if (!reference) return res.status(400).send('Missing payment reference');
+
+    if (!reference) {
+      return res.status(400).send('Missing transaction reference');
+    }
 
     try {
       await pool.query(
         `INSERT INTO payment_events
-         (provider, provider_event_id, provider_reference, event_type, payload)
-         VALUES ($1,$2,$3,$4,$5)
-         ON CONFLICT (provider, provider_event_id) DO NOTHING`,
-        ['paystack', event?.data?.id ? String(event.data.id) : null,
-         reference, eventType, event]
+        (provider, provider_event_id, provider_reference, event_type, payload)
+        VALUES ($1,$2,$3,$4,$5)
+        ON CONFLICT (provider, provider_event_id)
+        DO NOTHING`,
+        [
+          'flutterwave',
+          event?.data?.id ? String(event.data.id) : reference,
+          reference,
+          eventType,
+          event
+        ]
       );
 
-      if (eventType === 'charge.success') {
-        // TODO: call Paystack verify-transaction API from server and check:
-        // status=success, reference, exact expected amount in minor units, currency,
-        // and that the order is still pending. Use a DB transaction + row lock.
-        // Then mark order paid, create one unique payout record, and unlock download.
-        // If using provider split settlement, confirm provider has already applied
-        // the approved split and record settlement metadata instead of double-paying.
+      // Verify successful payments with Flutterwave.
+      if (
+        event?.data?.id &&
+        event?.data?.status === 'successful'
+      ) {
+        const response = await fetch(
+          `https://api.flutterwave.com/v3/transactions/${event.data.id}/verify`,
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`
+            }
+          }
+        );
+
+        const result = await response.json();
+
+        if (
+          result.status === 'success' &&
+          result.data?.status === 'successful' &&
+          result.data?.tx_ref === reference
+        ) {
+          console.log('Flutterwave payment verified:', reference);
+
+          // Order confirmation and creator payout
+          // will be connected after the database
+          // order and creator tables are configured.
+        }
       }
+
       return res.sendStatus(200);
-    } catch (err) {
-      console.error('Webhook persistence failed', err.message);
+
+    } catch (error) {
+      console.error('Flutterwave webhook error:', error.message);
       return res.sendStatus(500);
     }
   }
@@ -67,26 +111,35 @@ app.post('/webhooks/paystack',
 
 app.use(express.json({ limit: '100kb' }));
 
-app.get('/health', (_req, res) => res.json({ ok: true, service: 'billionaires-empire-payments' }));
-
-app.get('/config/public', (_req, res) => res.json({
-  currency: process.env.LAUNCH_CURRENCY || 'NGN',
-  commissionPercent: COMMISSION_BPS / 100,
-  note: 'Public settings only; no secret keys are returned.'
-}));
-
-app.post('/api/checkout', async (req, res) => {
-  // TODO: authenticate/rate-limit request; validate product is published;
-  // load price and creator from DB (never trust client-supplied amount);
-  // confirm creator is approved and provider subaccount is configured;
-  // calculate commission using integer minor units and a documented rounding rule;
-  // create pending order with random UUID/reference;
-  // initialize provider checkout with the verified amount, NGN, and approved split;
-  // return only the provider's checkout URL to the client.
-  return res.status(501).json({
-    error: 'Checkout is not enabled yet.',
-    nextStep: 'Configure provider credentials and approved marketplace split settlement first.'
+// Health check
+app.get('/health', (_req, res) => {
+  res.json({
+    ok: true,
+    service: 'billionaires-empire-payments',
+    provider: 'flutterwave'
   });
 });
 
-app.listen(port, () => console.log(`Billionaires Empire API listening on ${port}`));
+// Public configuration
+app.get('/config/public', (_req, res) => {
+  res.json({
+    currency: process.env.LAUNCH_CURRENCY || 'NGN',
+    commissionPercent: COMMISSION_BPS / 100,
+    paymentProvider: 'Flutterwave'
+  });
+});
+
+// Checkout
+app.post('/api/checkout', async (_req, res) => {
+  return res.status(501).json({
+    error: 'Checkout is not enabled yet.',
+    nextStep: 'Configure product pricing, creator accounts and Flutterwave split payments.'
+  });
+});
+
+// Start server
+app.listen(port, () => {
+  console.log(
+    `Billionaires Empire Flutterwave API running on port ${port}`
+  );
+});
