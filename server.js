@@ -7,8 +7,7 @@ const { Pool } = require('pg');
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
-app.get('/', (req, res) => {
-  res.send('Welcome to Billionaires Empire Marketplace. Server is running successfully!');
+app.use(express.static('public'));
 });app.use(express.static('public'));
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
