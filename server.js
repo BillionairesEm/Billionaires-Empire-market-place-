@@ -6,6 +6,11 @@ const crypto = require('crypto');
 const { Pool } = require('pg');
 
 const app = express();
+app.use(express.static('public'));
+
+app.get('/', (req, res) => {
+  res.sendFile('index.html', { root: 'public' });
+});
 const port = Number(process.env.PORT || 3000);
 app.use(express.static('public'));
 
