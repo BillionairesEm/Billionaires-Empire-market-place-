@@ -1,1 +1,162 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billionaires Empire Marketplace</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #090909;
+    color: white;
+}
+
+header {
+    padding: 22px 15px;
+    text-align: center;
+    background: #111;
+    border-bottom: 2px solid #d4af37;
+}
+
+.logo {
+    color: #d4af37;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+header p {
+    color: #ccc;
+    font-size: 13px;
+}
+
+.hero {
+    text-align: center;
+    padding: 65px 20px;
+}
+
+.hero h1 {
+    font-size: 34px;
+    color: #d4af37;
+}
+
+.hero p {
+    color: #ccc;
+    line-height: 1.7;
+}
+
+.container {
+    max-width: 850px;
+    margin: auto;
+    padding: 20px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #171717;
+    border: 1px solid #b89632;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+}
+
+.card h2 {
+    color: #d4af37;
+}
+
+button {
+    background: #d4af37;
+    color: #111;
+    border: none;
+    padding: 13px 20px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button:hover {
+    background: #f5d76e;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #aaa;
+    margin-top: 50px;
+    border-top: 1px solid #333;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">BILLIONAIRES EMPIRE</div>
+    <p>Your Digital Marketplace</p>
+</header>
+
+<section class="hero">
+    <h1>Welcome to Billionaires Empire</h1>
+    <p>
+        Discover digital products, learn new skills,
+        and build your online business.
+        <br>
+        A marketplace where creators and customers connect.
+    </p>
+</section>
+
+<div class="container">
+
+    <div class="cards">
+
+        <div class="card">
+            <h2>Become a Creator</h2>
+            <p>
+                Sell your digital products, courses,
+                ebooks and other digital resources.
+            </p>
+            <button onclick="location.href='/creator.html'">
+                Creator Registration
+            </button>
+            <button onclick="location.href='/creator-login.html'">
+                Creator Login
+            </button>
+        </div>
+
+        <div class="card">
+            <h2>Customer Account</h2>
+            <p>
+                Discover and purchase amazing digital
+                products from talented creators.
+            </p>
+            <button onclick="location.href='/customer.html'">
+                Create Account
+            </button>
+            <button onclick="location.href='/customer-login.html'">
+                Customer Login
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Billionaires Empire. All Rights Reserved.
+</footer>
+
+</body>
+</html>
